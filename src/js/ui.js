@@ -19,7 +19,7 @@ const ui = {
 
   // Toggle native HTML5 media controls
   toggleNativeControls(toggle = false) {
-    if (toggle && this.isHTML5) {
+    if (toggle && (this.isHTML5 || this.isMPD)) {
       this.media.setAttribute('controls', '');
     } else {
       this.media.removeAttribute('controls');
@@ -56,7 +56,7 @@ const ui = {
     ui.toggleNativeControls.call(this);
 
     // Setup captions for HTML5
-    if (this.isHTML5) {
+    if (this.isHTML5 || this.isMPD) {
       captions.setup.call(this);
     }
 
@@ -91,7 +91,7 @@ const ui = {
     toggleClass(
       this.elements.container,
       this.config.classNames.pip.supported,
-      support.pip && this.isHTML5 && this.isVideo,
+      support.pip && (this.isHTML5 || this.isMPD) && this.isVideo,
     );
 
     // Check for airplay support

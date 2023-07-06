@@ -7,6 +7,7 @@ import RangeTouch from 'rangetouch';
 
 import captions from './captions';
 import html5 from './html5';
+import mpd from './plugins/mpd';
 import support from './support';
 import { repaint, transitionEndEvent } from './utils/animation';
 import { dedupe } from './utils/arrays';
@@ -527,6 +528,14 @@ const controls = {
             this.speed = parseFloat(value);
             break;
 
+          case 'audioTrack':
+            this.audioTrack = value;
+            break;
+
+          case 'videoTrack':
+            this.videoTrack = value;
+            break;
+
           default:
             break;
         }
@@ -825,7 +834,11 @@ const controls = {
     let value = null;
     let list = container;
 
-    if (setting === 'captions') {
+    if (setting === 'audioTrack') {
+      value = this.audioTrack;
+    } else if (setting === 'videoTrack') {
+      value = this.videoTrack;
+    } else if (setting === 'captions') {
       value = this.currentTrack;
     } else {
       value = !is.empty(input) ? input : this[setting];
@@ -873,6 +886,38 @@ const controls = {
   // Translate a value into a nice label
   getLabel(setting, value) {
     switch (setting) {
+      case 'audioTrack': {
+        let label;
+
+        label = i18n.get(`audioTrackLabel.${value}`, this.config);
+        if (label.length) {
+          return label;
+        }
+
+        label = i18n.get(`audioTrackMPDLabel.${value}`, this.config);
+        if (label.length) {
+          return label;
+        }
+
+        return `${value}`;
+      }
+
+      case 'videoTrack': {
+        let label;
+
+        label = i18n.get(`videoTrackLabel.${value}`, this.config);
+        if (label.length) {
+          return label;
+        }
+
+        label = i18n.get(`videoTrackMPDLabel.${value}`, this.config);
+        if (label.length) {
+          return label;
+        }
+
+        return `${value}`;
+      }
+
       case 'speed':
         return value === 1 ? i18n.get('normal', this.config) : `${value}&times;`;
 
@@ -1097,6 +1142,102 @@ const controls = {
     controls.updateSetting.call(this, type, list);
   },
 
+  // Set a list of available audio tracks
+  setAudioTrackMenu(options) {
+    // Menu required
+    if (!is.element(this.elements.settings.panels.audioTrack)) {
+      return;
+    }
+
+    const type = 'audioTrack';
+    const list = this.elements.settings.panels.audioTrack.querySelector('[role="menu"]');
+
+    // Set options if passed and filter based on uniqueness and config
+    if (is.array(options)) {
+      this.options.audioTrack = dedupe(options);
+    }
+
+    // Toggle the pane and tab
+    const toggle = !is.empty(this.options.audioTrack) && this.options.audioTrack.length > 1;
+    controls.toggleMenuButton.call(this, type, toggle);
+
+    // Empty the menu
+    emptyElement(list);
+
+    // Check if we need to toggle the parent
+    controls.checkMenu.call(this);
+
+    // If we're hiding, nothing more to do
+    if (!toggle) {
+      return;
+    }
+
+    // Sort options by the config and then render options
+    this.options.audioTrack
+      .sort((a, b) => {
+        const sorting = this.config.audioTrack.options;
+        return sorting.indexOf(a) > sorting.indexOf(b) ? 1 : -1;
+      })
+      .forEach((audioTrack) => {
+        controls.createMenuItem.call(this, {
+          value: audioTrack,
+          list,
+          type,
+          title: controls.getLabel.call(this, 'audioTrack', audioTrack),
+        });
+      });
+
+    controls.updateSetting.call(this, type, list);
+  },
+
+  // Set a list of available video tracks
+  setVideoTrackMenu(options) {
+    // Menu required
+    if (!is.element(this.elements.settings.panels.videoTrack)) {
+      return;
+    }
+
+    const type = 'videoTrack';
+    const list = this.elements.settings.panels.videoTrack.querySelector('[role="menu"]');
+
+    // Set options if passed and filter based on uniqueness and config
+    if (is.array(options)) {
+      this.options.videoTrack = dedupe(options);
+    }
+
+    // Toggle the pane and tab
+    const toggle = !is.empty(this.options.videoTrack) && this.options.videoTrack.length > 1;
+    controls.toggleMenuButton.call(this, type, toggle);
+
+    // Empty the menu
+    emptyElement(list);
+
+    // Check if we need to toggle the parent
+    controls.checkMenu.call(this);
+
+    // If we're hiding, nothing more to do
+    if (!toggle) {
+      return;
+    }
+
+    // Sort options by the config and then render options
+    this.options.videoTrack
+      .sort((a, b) => {
+        const sorting = this.config.videoTrack.options;
+        return sorting.indexOf(a) > sorting.indexOf(b) ? 1 : -1;
+      })
+      .forEach((videoTrack) => {
+        controls.createMenuItem.call(this, {
+          value: videoTrack,
+          list,
+          type,
+          title: controls.getLabel.call(this, 'videoTrack', videoTrack),
+        });
+      });
+
+    controls.updateSetting.call(this, type, list);
+  },
+
   // Check if we need to hide/show the settings menu
   checkMenu() {
     const { buttons } = this.elements.settings;
@@ -1273,6 +1414,8 @@ const controls = {
       createTime,
       setQualityMenu,
       setSpeedMenu,
+      setAudioTrackMenu,
+      setVideoTrackMenu,
       showMenuPanel,
     } = controls;
     this.elements.controls = null;
@@ -1613,6 +1756,16 @@ const controls = {
       setQualityMenu.call(this, html5.getQualityOptions.call(this));
     }
 
+    if (this.isMPD) {
+      // Get track labels
+      this.config.i18n.audioTrackMPDLabel = mpd.getAudioTrackLabels.call(this);
+      this.config.i18n.videoTrackMPDLabel = mpd.getVideoTrackLabels.call(this);
+      // Set available tracks and quality levels
+      setQualityMenu.call(this, mpd.getQualityOptions.call(this));
+      setAudioTrackMenu.call(this, mpd.getAudioTrackOptions.call(this));
+      setVideoTrackMenu.call(this, mpd.getVideoTrackOptions.call(this));
+    }
+
     setSpeedMenu.call(this);
 
     return container;
@@ -1665,6 +1818,8 @@ const controls = {
         seektime: this.config.seekTime,
         speed: this.speed,
         quality: this.quality,
+        audioTrack: this.audioTrack,
+        videoTrack: this.videoTrack,
         captions: captions.getLabel.call(this),
         // TODO: Looping
         // loop: 'None',

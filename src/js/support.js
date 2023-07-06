@@ -24,9 +24,10 @@ const support = {
 
   // Check for support
   // Basic functionality vs full UI
-  check(type, provider) {
-    const api = support[type] || provider !== 'html5';
-    const ui = api && support.rangeInput;
+  check(type, provider, playsinline) {
+    const canPlayInline = browser.isIPhone && playsinline && support.playsinline;
+    const api = support[type] || !['html5', 'mpd'].includes(provider);
+    const ui = api && support.rangeInput && (type !== 'video' || !browser.isIPhone || canPlayInline);
 
     return {
       api,

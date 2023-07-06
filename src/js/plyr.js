@@ -50,7 +50,12 @@ class Plyr {
     this.touch = support.touch;
 
     // Set the media element
-    this.media = target;
+    if (window.dashjs && target instanceof window.dashjs.constructor) {
+      this.media = target.getVideoElement();
+      this.dash = target;
+    } else {
+      this.media = target;
+    }
 
     // String selector passed
     if (is.string(this.media)) {
@@ -219,7 +224,7 @@ class Plyr {
       case 'video':
       case 'audio':
         this.type = type;
-        this.provider = providers.html5;
+        this.provider = this.dash ? providers.mpd : providers.html5;
 
         // Get config from attributes
         if (this.media.hasAttribute('crossorigin')) {
@@ -292,7 +297,7 @@ class Plyr {
 
     // Setup interface
     // If embed but not fully supported, build interface now to avoid flash of controls
-    if (this.isHTML5 || (this.isEmbed && !this.supported.ui)) {
+    if (this.isHTML5 || this.isMPD || (this.isEmbed && !this.supported.ui)) {
       ui.build.call(this);
     }
 
@@ -308,8 +313,13 @@ class Plyr {
     }
 
     // Autoplay if required
-    if (this.isHTML5 && this.config.autoplay) {
+    if ((this.isHTML5 || this.isMPD) && this.config.autoplay) {
       this.once('canplay', () => silencePromise(this.play()));
+    }
+
+    // playsinline for MPD
+    if (this.isMPD && this.config.playsinline) {
+      this.media.setAttribute('playsinline', '');
     }
 
     // Seek time will be recorded (in listeners.js) so we can prevent hiding controls for a few seconds after seek
@@ -342,6 +352,10 @@ class Plyr {
 
   get isVimeo() {
     return this.provider === providers.vimeo;
+  }
+
+  get isMPD() {
+    return this.provider === providers.mpd;
   }
 
   get isVideo() {
@@ -427,7 +441,7 @@ class Plyr {
    * Stop playback
    */
   stop = () => {
-    if (this.isHTML5) {
+    if (this.isHTML5 || this.isMPD) {
       this.pause();
       this.restart();
     } else if (is.function(this.media.stop)) {
@@ -631,7 +645,7 @@ class Plyr {
    */
   get hasAudio() {
     // Assume yes for all non HTML5 (as we can't tell...)
-    if (!this.isHTML5) {
+    if (!this.isHTML5 || !this.isMPD) {
       return true;
     }
 
@@ -722,6 +736,96 @@ class Plyr {
 
     // https://stackoverflow.com/a/32320020/1191319
     return 16;
+  }
+
+  /**
+   * Set audio track
+   */
+  set audioTrack(input) {
+    const config = this.config.audioTrack;
+    const options = this.options.audioTrack;
+
+    if (!options.length) {
+      return;
+    }
+
+    let audioTrack = [!is.empty(input) && input, this.storage.get('audioTrack'), config.selected, config.default].find(
+      (e) => e,
+    );
+
+    let updateStorage = true;
+
+    if (!options.includes(audioTrack)) {
+      const value = closest(options, audioTrack);
+      this.debug.warn(`Unsupported audioTrack option: ${audioTrack}, using ${value} instead`);
+      audioTrack = value;
+
+      // Don't update storage if quality is not supported
+      updateStorage = false;
+    }
+
+    // Update config
+    config.selected = audioTrack;
+
+    // Set audio track
+    this.media.audioTrack = audioTrack;
+
+    // Save to storage
+    if (updateStorage) {
+      this.storage.set({ audioTrack });
+    }
+  }
+
+  /**
+   * Get current audio track
+   */
+  get audioTrack() {
+    return this.media.audioTrack;
+  }
+
+  /**
+   * Set video track
+   */
+  set videoTrack(input) {
+    const config = this.config.videoTrack;
+    const options = this.options.videoTrack;
+
+    if (!options.length) {
+      return;
+    }
+
+    let videoTrack = [!is.empty(input) && input, this.storage.get('videoTrack'), config.selected, config.default].find(
+      (e) => e,
+    );
+
+    let updateStorage = true;
+
+    if (!options.includes(videoTrack)) {
+      const value = closest(options, videoTrack);
+      this.debug.warn(`Unsupported videoTrack option: ${videoTrack}, using ${value} instead`);
+      videoTrack = value;
+
+      // Don't update storage if quality is not supported
+      updateStorage = false;
+    }
+
+    // Update config
+    config.selected = videoTrack;
+
+    // Set video track
+    this.media.videoTrack = videoTrack;
+
+    // Save to storage
+    if (updateStorage) {
+      this.storage.set({ videoTrack });
+    }
+  }
+
+  /**
+   * Get current video track
+   */
+  get videoTrack() {
+    return this.media.videoTrack;
   }
 
   /**
@@ -1199,7 +1303,7 @@ class Plyr {
     clearTimeout(this.timers.resized);
 
     // Provider specific stuff
-    if (this.isHTML5) {
+    if (this.isHTML5 || this.isMPD) {
       // Restore native video controls
       ui.toggleNativeControls.call(this, true);
 

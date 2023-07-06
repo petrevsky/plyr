@@ -48,6 +48,9 @@
       href="https://cdn.plyr.io/static/fonts/gordita-bold.woff2"
     />
 
+    <!-- MPEG-DASH -->
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+
     <!-- Google Analytics-->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-132699580-1"></script>
     <script>
@@ -95,6 +98,8 @@
             </svg>
             YouTube
           </button>
+          ,
+          <button type="button" class="faux-link" data-source="vimeo">
           and
           <button type="button" class="link" data-source="vimeo">
             <svg class="icon" role="presentation">
@@ -106,6 +111,21 @@
               ></path>
             </svg>
             Vimeo
+          </button>
+          and
+          <button type="button" class="faux-link" data-source="mpd">
+            <svg class="icon" role="presentation"><title>MPEG-DASH</title>
+              <path d="M0,2.16h4.85v5.21h-4.85Z" />
+              <path d="M11.15,2.16h4.85v5.21h-4.85Z" />
+              <path d="M5.57,2.16h4.85v5.21h-4.85Z" />
+              <path d="M0,8.09h4.85v3.06h-4.85Z" />
+              <path d="M11.15,8.09h4.85v3.06h-4.85Z" />
+              <path d="M5.57,8.09h4.85v3.06h-4.85Z" />
+              <path d="M0,11.87h4.85v1.98h-4.85Z" />
+              <path d="M11.15,11.87h4.85v1.98h-4.85Z" />
+              <path d="M5.57,11.87h4.85v1.98h-4.85Z" />
+            </svg>
+            MPEG-DASH
           </button>
         </p>
 
@@ -234,6 +254,23 @@
                   ></path></svg
                 >Vimeo
               </span>
+            </small>
+          </li>
+          <li class="plyr__cite plyr__cite--mpd" hidden>
+            <small>
+              <svg class="icon" role="presentation"><title>MPEG-DASH</title>
+                <path d="M0,2.16h4.85v5.21h-4.85Z" />
+                <path d="M11.15,2.16h4.85v5.21h-4.85Z" />
+                <path d="M5.57,2.16h4.85v5.21h-4.85Z" />
+                <path d="M0,8.09h4.85v3.06h-4.85Z" />
+                <path d="M11.15,8.09h4.85v3.06h-4.85Z" />
+                <path d="M5.57,8.09h4.85v3.06h-4.85Z" />
+                <path d="M0,11.87h4.85v1.98h-4.85Z" />
+                <path d="M11.15,11.87h4.85v1.98h-4.85Z" />
+                <path d="M5.57,11.87h4.85v1.98h-4.85Z" />
+              </svg>
+              <a href="https://mango.blender.org/" target="_blank">Tears of Steel</a>
+              &copy; Blender
             </small>
           </li>
         </ul>

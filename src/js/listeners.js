@@ -331,7 +331,7 @@ class Listeners {
     // Handle the media finishing
     on.call(player, player.media, 'ended', () => {
       // Show poster on end
-      if (player.isHTML5 && player.isVideo && player.config.resetOnEnd) {
+      if ((player.isHTML5 || player.isMPD) && player.isVideo && player.config.resetOnEnd) {
         // Restart
         player.restart();
 
@@ -436,6 +436,50 @@ class Listeners {
     on.call(player, player.media, 'qualitychange', (event) => {
       // Update UI
       controls.updateSetting.call(player, 'quality', null, event.detail.quality);
+    });
+
+    // Audio track change
+    on.call(player, player.media, 'audiotrackchange', (event) => {
+      // Update UI
+      controls.updateSetting.call(player, 'audioTrack', null, event.detail.audioTrack);
+    });
+
+    // Video track change
+    on.call(player, player.media, 'videotrackchange', (event) => {
+      // Update UI
+      controls.updateSetting.call(player, 'videoTrack', null, event.detail.videoTrack);
+    });
+
+    // Quality list update
+    on.call(player, player.media, 'qualitylistupdate', (event) => {
+      // Update UI
+      controls.setQualityMenu.call(player, event.detail.list);
+    });
+
+    // Audio track list update
+    on.call(player, player.media, 'audiotracklistupdate', (event) => {
+      // Update UI
+      controls.setAudioTrackMenu.call(player, event.detail.list);
+    });
+
+    // Video track list update
+    on.call(player, player.media, 'videotracklistupdate', (event) => {
+      // Update UI
+      controls.setVideoTrackMenu.call(player, event.detail.list);
+    });
+
+    // Audio track labels update
+    on.call(player, player.media, 'audiotracklabelsupdate', (event) => {
+      // Update UI
+      player.config.i18n.audioTrackMPDLabel = event.detail.list;
+      controls.setAudioTrackMenu.call(player, player.options.audioTrack);
+    });
+
+    // Video track labels update
+    on.call(player, player.media, 'videotracklabelsupdate', (event) => {
+      // Update UI
+      player.config.i18n.videoTrackMPDLabel = event.detail.list;
+      controls.setVideoTrackMenu.call(player, player.options.videoTrack);
     });
 
     // Update download link when ready and if quality changes

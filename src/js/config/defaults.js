@@ -88,6 +88,18 @@ const defaults = {
     options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
   },
 
+  // Audio Tracks (MPEG-DASH)
+  audioTrack: {
+    options: [],
+    onChange: null,
+  },
+
+  // Video Tracks (MPEG-DASH)
+  videoTrack: {
+    options: [],
+    onChange: null,
+  },
+
   // Keyboard shortcut settings
   keyboard: {
     focused: true,
@@ -144,7 +156,7 @@ const defaults = {
     // 'download',
     'fullscreen',
   ],
-  settings: ['captions', 'quality', 'speed'],
+  settings: ['captions', 'quality', 'speed', 'audioTrack', 'videoTrack'],
 
   // Localisation
   i18n: {
@@ -173,6 +185,8 @@ const defaults = {
     pip: 'PIP',
     menuBack: 'Go back to previous menu',
     speed: 'Speed',
+    audioTrack: 'Audio Track',
+    videoTrack: 'Video Track',
     normal: 'Normal',
     quality: 'Quality',
     loop: 'Loop',
@@ -183,6 +197,7 @@ const defaults = {
     disabled: 'Disabled',
     enabled: 'Enabled',
     advertisement: 'Ad',
+    qualityAuto: 'Auto',
     qualityBadge: {
       2160: '4K',
       1440: 'HD',
@@ -273,6 +288,15 @@ const defaults = {
     // Quality
     'qualitychange',
 
+    // MPEG-DASH
+    'audiotrackchange',
+    'videotrackchange',
+    'qualitylistupdate',
+    'audiotracklistupdate',
+    'videotracklistupdate',
+    'audiotracklabelsupdate',
+    'videotracklabelsupdate',
+
     // Ads
     'adsloaded',
     'adscontentpause',
@@ -316,6 +340,8 @@ const defaults = {
       speed: '[data-plyr="speed"]',
       language: '[data-plyr="language"]',
       quality: '[data-plyr="quality"]',
+      audioTrack: '[data-plyr="audioTrack"]',
+      videoTrack: '[data-plyr="videoTrack"]',
     },
     display: {
       currentTime: '.plyr__time--current',

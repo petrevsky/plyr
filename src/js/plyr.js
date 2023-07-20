@@ -976,6 +976,12 @@ class Plyr {
     controls.setDownloadUrl.call(this);
   }
 
+  set markers(points) {
+    this.config.markers.points = points;
+
+    controls.setMarkers.call(this);
+  }
+
   /**
    * Set the poster image for a video
    * @param {String} input - the URL for the new poster image

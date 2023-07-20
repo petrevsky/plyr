@@ -9664,6 +9664,13 @@ typeof navigator === "object" && (function (global, factory) {
     get source() {
       return this.media.currentSrc;
     }
+    set markers(input) {
+      this.config.markers.points = input;
+      controls.setMarkers.call(this);
+    }
+    get markers() {
+      return this.config.markers.points;
+    }
 
     /**
      * Get a download URL (either source or custom)
@@ -9684,10 +9691,6 @@ typeof navigator === "object" && (function (global, factory) {
       }
       this.config.urls.download = input;
       controls.setDownloadUrl.call(this);
-    }
-    set markers(points) {
-      this.config.markers.points = points;
-      controls.setMarkers.call(this);
     }
 
     /**

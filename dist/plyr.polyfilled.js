@@ -3887,7 +3887,10 @@ typeof navigator === "object" && (function (global, factory) {
     // Add markers
     setMarkers() {
       var _this$config$markers2, _this$config$markers3;
-      if (!this.duration || this.elements.markers) return;
+      console.log(this.duration);
+      console.log(this.elements.markers);
+      if (!this.duration) return;
+      if (this.elements.markers) ;
 
       // Get valid points
       const points = (_this$config$markers2 = this.config.markers) === null || _this$config$markers2 === void 0 ? void 0 : (_this$config$markers3 = _this$config$markers2.points) === null || _this$config$markers3 === void 0 ? void 0 : _this$config$markers3.filter(({

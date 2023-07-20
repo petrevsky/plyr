@@ -1934,7 +1934,12 @@ const controls = {
 
   // Add markers
   setMarkers() {
-    if (!this.duration || this.elements.markers) return;
+    console.log(this.duration);
+    console.log(this.elements.markers);
+    if (!this.duration) return;
+
+    if (this.elements.markers) {
+    }
 
     // Get valid points
     const points = this.config.markers?.points?.filter(({ time }) => time > 0 && time < this.duration);

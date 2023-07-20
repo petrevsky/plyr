@@ -1934,11 +1934,13 @@ const controls = {
 
   // Add markers
   setMarkers() {
-    console.log(this.duration);
-    console.log(this.elements.markers);
     if (!this.duration) return;
 
     if (this.elements.markers) {
+      // Delete all markers previously set
+      document.querySelectorAll('.plyr__progress__marker').forEach((marker) => {
+        marker.remove();
+      });
     }
 
     // Get valid points

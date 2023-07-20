@@ -3881,10 +3881,13 @@ const controls = {
   // Add markers
   setMarkers() {
     var _this$config$markers2, _this$config$markers3;
-    console.log(this.duration);
-    console.log(this.elements.markers);
     if (!this.duration) return;
-    if (this.elements.markers) ;
+    if (this.elements.markers) {
+      // Delete all markers previously set!
+      document.querySelectorAll('.plyr__progress__marker').forEach(marker => {
+        marker.remove();
+      });
+    }
 
     // Get valid points
     const points = (_this$config$markers2 = this.config.markers) === null || _this$config$markers2 === void 0 ? void 0 : (_this$config$markers3 = _this$config$markers2.points) === null || _this$config$markers3 === void 0 ? void 0 : _this$config$markers3.filter(({

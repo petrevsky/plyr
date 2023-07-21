@@ -3892,7 +3892,7 @@ const controls = {
     // Get valid points
     const points = (_this$config$markers2 = this.config.markers) === null || _this$config$markers2 === void 0 ? void 0 : (_this$config$markers3 = _this$config$markers2.points) === null || _this$config$markers3 === void 0 ? void 0 : _this$config$markers3.filter(({
       time
-    }) => time > 0 && time <= this.duration);
+    }) => time >= 0 && time <= this.duration);
     if (!(points !== null && points !== void 0 && points.length)) return;
     const containerFragment = document.createDocumentFragment();
     const pointsFragment = document.createDocumentFragment();

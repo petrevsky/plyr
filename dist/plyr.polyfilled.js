@@ -2822,7 +2822,11 @@ typeof navigator === "object" && (function (global, factory) {
       // Get marker point for time
       const point = (_this$config$markers = this.config.markers) === null || _this$config$markers === void 0 ? void 0 : (_this$config$markers$ = _this$config$markers.points) === null || _this$config$markers$ === void 0 ? void 0 : _this$config$markers$.find(({
         time: t
-      }) => t === Math.round(time));
+      }) => {
+        var _this$elements$marker;
+        return t === ((_this$elements$marker = this.elements.markers) === null || _this$elements$marker === void 0 ? void 0 : _this$elements$marker.active);
+      });
+      // const point = this.config.markers?.points?.find(({ time: t }) => t === Math.round(time));
 
       // Append the point label to the tooltip
       if (point) {
@@ -3912,6 +3916,17 @@ typeof navigator === "object" && (function (global, factory) {
           class: this.config.classNames.marker
         }, '');
         const left = `${point.time / this.duration * 100}%`;
+
+        // Append active marker
+
+        markerElement.addEventListener('mouseenter', () => {
+          this.elements.markers.active = point.time;
+        });
+
+        // Hide on leave
+        markerElement.addEventListener('mouseleave', () => {
+          this.elements.markers.active = false;
+        });
         if (tipElement) {
           // Show on hover
           markerElement.addEventListener('mouseenter', () => {
@@ -8027,7 +8042,7 @@ typeof navigator === "object" && (function (global, factory) {
           // Calculate seek hover position as approx video seconds
           this.seekTime = this.player.media.duration * (this.player.elements.inputs.seek.value / 100);
         } else {
-          var _this$player$config$m, _this$player$config$m2;
+          var _this$config$markers, _this$config$markers$;
           // Calculate seek hover position as approx video seconds
           const clientRect = this.player.elements.progress.getBoundingClientRect();
           const percentage = 100 / clientRect.width * (event.pageX - clientRect.left);
@@ -8046,9 +8061,13 @@ typeof navigator === "object" && (function (global, factory) {
           this.elements.thumb.time.innerText = formatTime(this.seekTime);
 
           // Get marker point for time
-          const point = (_this$player$config$m = this.player.config.markers) === null || _this$player$config$m === void 0 ? void 0 : (_this$player$config$m2 = _this$player$config$m.points) === null || _this$player$config$m2 === void 0 ? void 0 : _this$player$config$m2.find(({
+          const point = (_this$config$markers = this.config.markers) === null || _this$config$markers === void 0 ? void 0 : (_this$config$markers$ = _this$config$markers.points) === null || _this$config$markers$ === void 0 ? void 0 : _this$config$markers$.find(({
             time: t
-          }) => t === Math.round(this.seekTime));
+          }) => {
+            var _this$player$markers;
+            return t === ((_this$player$markers = this.player.markers) === null || _this$player$markers === void 0 ? void 0 : _this$player$markers.active);
+          });
+          // const point = this.player.config.markers?.points?.find(({ time: t }) => t === Math.round(this.seekTime));
 
           // Append the point label to the tooltip
           if (point) {

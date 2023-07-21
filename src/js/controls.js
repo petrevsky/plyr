@@ -741,7 +741,8 @@ const controls = {
     tipElement.innerText = controls.formatTime(time);
 
     // Get marker point for time
-    const point = this.config.markers?.points?.find(({ time: t }) => t === Math.round(time));
+    const point = this.config.markers?.points?.find(({ time: t }) => t === this.elements.markers?.active);
+    // const point = this.config.markers?.points?.find(({ time: t }) => t === Math.round(time));
 
     // Append the point label to the tooltip
     if (point) {
@@ -1964,6 +1965,17 @@ const controls = {
       );
 
       const left = `${(point.time / this.duration) * 100}%`;
+
+      // Append active marker
+
+      markerElement.addEventListener('mouseenter', () => {
+        this.elements.markers.active = point.time;
+      });
+
+      // Hide on leave
+      markerElement.addEventListener('mouseleave', () => {
+        this.elements.markers.active = false;
+      });
 
       if (tipElement) {
         // Show on hover

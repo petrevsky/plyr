@@ -241,7 +241,9 @@ class PreviewThumbnails {
       this.elements.thumb.time.innerText = formatTime(this.seekTime);
 
       // Get marker point for time
-      const point = this.config.markers?.points?.find(({ time: t }) => t === this.player.markers?.active);
+      const point = this.player.config.markers?.points?.find(
+        ({ time: t }) => t === this.player.elements.markers?.active,
+      );
       // const point = this.player.config.markers?.points?.find(({ time: t }) => t === Math.round(this.seekTime));
 
       // Append the point label to the tooltip

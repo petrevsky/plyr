@@ -1944,7 +1944,7 @@ const controls = {
     }
 
     // Get valid points
-    const points = this.config.markers?.points?.filter(({ time }) => time > 0 && time < this.duration);
+    const points = this.config.markers?.points?.filter(({ time }) => time >= 0 && time <= this.duration);
     if (!points?.length) return;
 
     const containerFragment = document.createDocumentFragment();

@@ -3899,7 +3899,12 @@ const controls = {
     }) => time >= 0 && time <= this.duration);
     if (!(points !== null && points !== void 0 && points.length)) return;
     const containerFragment = document.createDocumentFragment();
-    const pointsFragment = document.createDocumentFragment();
+    const pointsWrapper = createElement('div', {
+      class: 'plyr__progress__markers'
+    }, '');
+
+    // const pointsFragment = document.createDocumentFragment();
+
     let tipElement = null;
     const tipVisible = `${this.config.classNames.tooltip}--visible`;
     const toggleTip = show => toggleClass(tipElement, tipVisible, show);
@@ -3939,9 +3944,9 @@ const controls = {
         this.currentTime = point.time;
       });
       markerElement.style.left = left;
-      pointsFragment.appendChild(markerElement);
+      pointsWrapper.appendChild(markerElement);
     });
-    containerFragment.appendChild(pointsFragment);
+    containerFragment.appendChild(pointsWrapper);
 
     // Inject a tooltip if needed
     if (!this.config.tooltips.seek) {
@@ -3951,7 +3956,7 @@ const controls = {
       containerFragment.appendChild(tipElement);
     }
     this.elements.markers = {
-      points: pointsFragment,
+      points: pointsWrapper,
       tip: tipElement
     };
     this.elements.progress.appendChild(containerFragment);

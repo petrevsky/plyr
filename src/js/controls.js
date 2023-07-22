@@ -737,11 +737,16 @@ const controls = {
 
     const time = (this.duration / 100) * percent;
 
-    // Display the time a click would seek to
-    tipElement.innerText = controls.formatTime(time);
-
     // Get marker point for time
     const point = this.config.markers?.points?.find(({ time: t }) => t === this.elements.markers?.active);
+
+    // Display the time a click would seek to
+    if (point) {
+      tipElement.innerText = controls.formatTime(point.time);
+    } else {
+      tipElement.innerText = controls.formatTime(time);
+    }
+
     // const point = this.config.markers?.points?.find(({ time: t }) => t === Math.round(time));
 
     // Append the point label to the tooltip

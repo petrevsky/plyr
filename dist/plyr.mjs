@@ -2334,9 +2334,6 @@ const controls = {
     }
     const time = this.duration / 100 * percent;
 
-    // Display the time a click would seek to
-    tipElement.innerText = controls.formatTime(time);
-
     // Get marker point for time
     const point = (_this$config$markers = this.config.markers) === null || _this$config$markers === void 0 ? void 0 : (_this$config$markers$ = _this$config$markers.points) === null || _this$config$markers$ === void 0 ? void 0 : _this$config$markers$.find(({
       time: t
@@ -2344,6 +2341,14 @@ const controls = {
       var _this$elements$marker;
       return t === ((_this$elements$marker = this.elements.markers) === null || _this$elements$marker === void 0 ? void 0 : _this$elements$marker.active);
     });
+
+    // Display the time a click would seek to
+    if (point) {
+      tipElement.innerText = controls.formatTime(point.time);
+    } else {
+      tipElement.innerText = controls.formatTime(time);
+    }
+
     // const point = this.config.markers?.points?.find(({ time: t }) => t === Math.round(time));
 
     // Append the point label to the tooltip
@@ -7589,9 +7594,6 @@ class PreviewThumbnails {
         }
         this.mousePosX = event.pageX;
 
-        // Set time text inside image container
-        this.elements.thumb.time.innerText = formatTime(this.seekTime);
-
         // Get marker point for time
         const point = (_this$player$config$m = this.player.config.markers) === null || _this$player$config$m === void 0 ? void 0 : (_this$player$config$m2 = _this$player$config$m.points) === null || _this$player$config$m2 === void 0 ? void 0 : _this$player$config$m2.find(({
           time: t
@@ -7600,6 +7602,13 @@ class PreviewThumbnails {
           return t === ((_this$player$elements = this.player.elements.markers) === null || _this$player$elements === void 0 ? void 0 : _this$player$elements.active);
         });
         // const point = this.player.config.markers?.points?.find(({ time: t }) => t === Math.round(this.seekTime));
+
+        // Set time text inside image container
+        if (point) {
+          this.elements.thumb.time.innerText = formatTime(point.time);
+        } else {
+          this.elements.thumb.time.innerText = formatTime(this.seekTime);
+        }
 
         // Append the point label to the tooltip
         if (point) {

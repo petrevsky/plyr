@@ -237,14 +237,18 @@ class PreviewThumbnails {
 
       this.mousePosX = event.pageX;
 
-      // Set time text inside image container
-      this.elements.thumb.time.innerText = formatTime(this.seekTime);
-
       // Get marker point for time
       const point = this.player.config.markers?.points?.find(
         ({ time: t }) => t === this.player.elements.markers?.active,
       );
       // const point = this.player.config.markers?.points?.find(({ time: t }) => t === Math.round(this.seekTime));
+
+      // Set time text inside image container
+      if (point) {
+        this.elements.thumb.time.innerText = formatTime(point.time);
+      } else {
+        this.elements.thumb.time.innerText = formatTime(this.seekTime);
+      }
 
       // Append the point label to the tooltip
       if (point) {

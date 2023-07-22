@@ -123,6 +123,11 @@ declare class Plyr {
   source: Plyr.SourceInfo;
 
   /**
+   * Gets or sets the marker points for the player.
+   */
+  markers: Plyr.MarkersPoints;
+
+  /**
    * Gets or sets the current poster image URL for the player.
    */
   poster: string;

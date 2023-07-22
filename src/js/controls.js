@@ -737,11 +737,17 @@ const controls = {
 
     const time = (this.duration / 100) * percent;
 
-    // Display the time a click would seek to
-    tipElement.innerText = controls.formatTime(time);
-
     // Get marker point for time
-    const point = this.config.markers?.points?.find(({ time: t }) => t === Math.round(time));
+    const point = this.config.markers?.points?.find(({ time: t }) => t === this.elements.markers?.active);
+
+    // Display the time a click would seek to
+    if (point) {
+      tipElement.innerText = controls.formatTime(point.time);
+    } else {
+      tipElement.innerText = controls.formatTime(time);
+    }
+
+    // const point = this.config.markers?.points?.find(({ time: t }) => t === Math.round(time));
 
     // Append the point label to the tooltip
     if (point) {
@@ -1934,14 +1940,28 @@ const controls = {
 
   // Add markers
   setMarkers() {
-    if (!this.duration || this.elements.markers) return;
+    if (!this.duration) return;
+
+    if (this.elements.markers) {
+      // Delete all markers previously set!
+      document.querySelectorAll('.plyr__progress__marker').forEach((marker) => {
+        marker.remove();
+      });
+
+      document.querySelectorAll('.plyr__progress__markers').forEach((marker) => {
+        marker.remove();
+      });
+    }
 
     // Get valid points
-    const points = this.config.markers?.points?.filter(({ time }) => time > 0 && time < this.duration);
+    const points = this.config.markers?.points?.filter(({ time }) => time >= 0 && time <= this.duration);
     if (!points?.length) return;
 
     const containerFragment = document.createDocumentFragment();
-    const pointsFragment = document.createDocumentFragment();
+    const pointsWrapper = createElement('div', { class: 'plyr__progress__markers' }, '');
+
+    // const pointsFragment = document.createDocumentFragment();
+
     let tipElement = null;
     const tipVisible = `${this.config.classNames.tooltip}--visible`;
     const toggleTip = (show) => toggleClass(tipElement, tipVisible, show);
@@ -1957,6 +1977,17 @@ const controls = {
       );
 
       const left = `${(point.time / this.duration) * 100}%`;
+
+      // Append active marker
+
+      markerElement.addEventListener('mouseenter', () => {
+        this.elements.markers.active = point.time;
+      });
+
+      // Hide on leave
+      markerElement.addEventListener('mouseleave', () => {
+        this.elements.markers.active = false;
+      });
 
       if (tipElement) {
         // Show on hover
@@ -1978,10 +2009,10 @@ const controls = {
       });
 
       markerElement.style.left = left;
-      pointsFragment.appendChild(markerElement);
+      pointsWrapper.appendChild(markerElement);
     });
 
-    containerFragment.appendChild(pointsFragment);
+    containerFragment.appendChild(pointsWrapper);
 
     // Inject a tooltip if needed
     if (!this.config.tooltips.seek) {
@@ -1997,7 +2028,7 @@ const controls = {
     }
 
     this.elements.markers = {
-      points: pointsFragment,
+      points: pointsWrapper,
       tip: tipElement,
     };
 

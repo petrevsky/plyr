@@ -3897,6 +3897,9 @@ typeof navigator === "object" && (function (global, factory) {
         document.querySelectorAll('.plyr__progress__marker').forEach(marker => {
           marker.remove();
         });
+        document.querySelectorAll('.plyr__progress__markers').forEach(marker => {
+          marker.remove();
+        });
       }
 
       // Get valid points

@@ -5823,8 +5823,8 @@ class Listeners {
 
         // If we're done seeking and it was playing, resume playback
         if (play && done) {
-          seek.removeAttribute(attribute);
           silencePromise(player.play());
+          seek.removeAttribute(attribute);
         } else if (!done && player.playing) {
           seek.setAttribute(attribute, '');
           player.pause();

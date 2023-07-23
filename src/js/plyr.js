@@ -430,7 +430,7 @@ class Plyr {
     // Toggle based on current state if nothing passed
     const toggle = is.boolean(input) ? input : !this.playing;
 
-    triggerEvent.call(this, this.media, 'togglePlay', true);
+    triggerEvent.call(this, this.media, 'togglePlay', true, { toggle });
 
     if (toggle) {
       return this.play();

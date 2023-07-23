@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="/Users/chris/Desktop/plyr-dash/plyr-dash/dist/plyr.css" />
-    <script src="/Users/chris/Desktop/plyr-dash/plyr-dash/dist/plyr.js?v=1223"></script>
+    <link rel="stylesheet" href="./dist/plyr.css" />
+    <script src="./dist/plyr.js?v=122355"></script>
     <style>
       .plyr__progress__marker {
         width: 50px;
@@ -62,6 +62,7 @@
 
         // Setup the player
         const player = new Plyr(selector, {
+          debug: true,
           title: 'View From A Blue Moon',
           iconUrl: 'dist/demo.svg',
           keyboard: {

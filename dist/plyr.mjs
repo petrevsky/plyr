@@ -8233,7 +8233,7 @@ class Plyr {
     _defineProperty$1(this, "togglePlay", input => {
       // Toggle based on current state if nothing passed
       const toggle = is.boolean(input) ? input : !this.playing;
-      triggerEvent.call(this, toggle, 'togglePlay');
+      triggerEvent.call(this, this.media, 'togglePlay', true);
       if (toggle) {
         return this.play();
       }

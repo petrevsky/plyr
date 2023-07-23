@@ -5829,8 +5829,8 @@ typeof navigator === "object" && (function (global, factory) {
 
           // If we're done seeking and it was playing, resume playback
           if (play && done) {
-            silencePromise(player.play());
             seek.removeAttribute(attribute);
+            silencePromise(player.play());
           } else if (!done && player.playing) {
             seek.setAttribute(attribute, '');
             player.pause();
@@ -8709,6 +8709,7 @@ typeof navigator === "object" && (function (global, factory) {
       _defineProperty$1(this, "togglePlay", input => {
         // Toggle based on current state if nothing passed
         const toggle = is.boolean(input) ? input : !this.playing;
+        triggerEvent.call(this, toggle, 'togglePlay');
         if (toggle) {
           return this.play();
         }

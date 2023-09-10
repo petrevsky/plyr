@@ -5372,7 +5372,12 @@ class Listeners {
           seekTo = seek.value;
         }
         seek.removeAttribute('seek-value');
-        player.currentTime = seekTo / seek.max * player.duration;
+        const value = seekTo / seek.max * player.duration;
+        if (player.dash) {
+          player.dash.seek(value);
+        } else {
+          player.currentTime = value;
+        }
       }, 'seek');
 
       // Seek tooltip

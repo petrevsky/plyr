@@ -638,9 +638,9 @@ const controls = {
           value = getPercentage(this.currentTime, this.duration);
 
           // Set seek range value only if it's a 'natural' time event
-          if (event.type === 'timeupdate') {
-            controls.setRange.call(this, this.elements.inputs.seek, value);
-          }
+          // if (event.type === 'timeupdate') {
+          controls.setRange.call(this, this.elements.inputs.seek, value);
+          // }
 
           break;
 

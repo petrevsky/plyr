@@ -2251,9 +2251,10 @@ const controls = {
           value = getPercentage(this.currentTime, this.duration);
 
           // Set seek range value only if it's a 'natural' time event
-          if (event.type === 'timeupdate') {
-            controls.setRange.call(this, this.elements.inputs.seek, value);
-          }
+          // if (event.type === 'timeupdate') {
+          controls.setRange.call(this, this.elements.inputs.seek, value);
+          // }
+
           break;
 
         // Check buffer status
@@ -5372,12 +5373,7 @@ class Listeners {
           seekTo = seek.value;
         }
         seek.removeAttribute('seek-value');
-        const value = seekTo / seek.max * player.duration;
-        if (player.dash) {
-          player.dash.seek(value);
-        } else {
-          player.currentTime = value;
-        }
+        player.currentTime = seekTo / seek.max * player.duration;
       }, 'seek');
 
       // Seek tooltip

@@ -1813,7 +1813,7 @@ const mpd = {
         return;
       }
       const label = mpd.getTrackLabel.call(this, audioTrack);
-      if (labelsArr.includes(label)) {
+      if (!labelsArr.includes(label)) {
         labelsArr.push(label);
         audioTrackList.push(mpd.getTrackName.call(this, audioTrack));
       }

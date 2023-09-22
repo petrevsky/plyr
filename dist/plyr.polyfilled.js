@@ -1810,8 +1810,19 @@ typeof navigator === "object" && (function (global, factory) {
     },
     // Get audio tracks
     getAudioTrackOptions() {
-      const audioTrackList = this.dash.getTracksFor('audio').map(audioTrack => {
-        return mpd.getTrackName.call(this, audioTrack);
+      const labelsArr = [];
+      const audioTrackList = [];
+      this.dash.getTracksFor('audio').forEach(audioTrack => {
+        // Guard to check if label exists in the track
+        // If not we skip it and don't show this as an option
+        if (!audioTrack.labels[0]) {
+          return;
+        }
+        const label = mpd.getTrackLabel.call(this, audioTrack);
+        if (labelsArr.includes(label)) {
+          labelsArr.push(label);
+          audioTrackList.push(mpd.getTrackName.call(this, audioTrack));
+        }
       });
       return audioTrackList;
     },
@@ -2815,7 +2826,6 @@ typeof navigator === "object" && (function (global, factory) {
         percent = 100;
       }
       const time = this.duration / 100 * percent;
-
       // Get marker point for time
       const point = (_this$config$markers = this.config.markers) === null || _this$config$markers === void 0 ? void 0 : (_this$config$markers$ = _this$config$markers.points) === null || _this$config$markers$ === void 0 ? void 0 : _this$config$markers$.find(({
         time: t
@@ -2823,7 +2833,6 @@ typeof navigator === "object" && (function (global, factory) {
         var _this$elements$marker;
         return t === ((_this$elements$marker = this.elements.markers) === null || _this$elements$marker === void 0 ? void 0 : _this$elements$marker.active);
       });
-
       // Display the time a click would seek to
       if (point) {
         tipElement.innerText = controls.formatTime(point.time);
@@ -3916,9 +3925,7 @@ typeof navigator === "object" && (function (global, factory) {
       const pointsWrapper = createElement('div', {
         class: 'plyr__progress__markers'
       }, '');
-
       // const pointsFragment = document.createDocumentFragment();
-
       let tipElement = null;
       const tipVisible = `${this.config.classNames.tooltip}--visible`;
       const toggleTip = show => toggleClass(tipElement, tipVisible, show);

@@ -85,9 +85,24 @@ const mpd = {
 
   // Get audio tracks
   getAudioTrackOptions() {
-    const audioTrackList = this.dash.getTracksFor('audio').map((audioTrack) => {
-      return mpd.getTrackName.call(this, audioTrack);
+    const labelsArr = [];
+    const audioTrackList = [];
+
+    this.dash.getTracksFor('audio').forEach((audioTrack) => {
+      // Guard to check if label exists in the track
+      // If not we skip it and don't show this as an option
+      if (!audioTrack.labels[0]) {
+        return;
+      }
+
+      const label = mpd.getTrackLabel.call(this, audioTrack);
+
+      if (labelsArr.includes(label)) {
+        labelsArr.push(label);
+        audioTrackList.push(mpd.getTrackName.call(this, audioTrack));
+      }
     });
+
     return audioTrackList;
   },
 

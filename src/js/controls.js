@@ -736,10 +736,8 @@ const controls = {
     }
 
     const time = (this.duration / 100) * percent;
-
     // Get marker point for time
     const point = this.config.markers?.points?.find(({ time: t }) => t === this.elements.markers?.active);
-
     // Display the time a click would seek to
     if (point) {
       tipElement.innerText = controls.formatTime(point.time);
@@ -1959,9 +1957,7 @@ const controls = {
 
     const containerFragment = document.createDocumentFragment();
     const pointsWrapper = createElement('div', { class: 'plyr__progress__markers' }, '');
-
     // const pointsFragment = document.createDocumentFragment();
-
     let tipElement = null;
     const tipVisible = `${this.config.classNames.tooltip}--visible`;
     const toggleTip = (show) => toggleClass(tipElement, tipVisible, show);

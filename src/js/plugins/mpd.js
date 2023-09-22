@@ -87,8 +87,9 @@ const mpd = {
   getAudioTrackOptions() {
     const labelsArr = [];
     const audioTrackList = [];
+    const allTracks = this.dash.getTracksFor('audio').reverse();
 
-    this.dash.getTracksFor('audio').forEach((audioTrack) => {
+    allTracks.forEach((audioTrack) => {
       // Guard to check if label exists in the track
       // If not we skip it and don't show this as an option
       if (!audioTrack.labels[0]) {

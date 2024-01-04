@@ -379,6 +379,7 @@ const defaults = {
     hidden: 'plyr__sr-only',
     hideControls: 'plyr--hide-controls',
     isTouch: 'plyr--is-touch',
+    isSmall: 'plyr--is-small',
     uiSupported: 'plyr--full-ui',
     noTransition: 'plyr--no-transition',
     display: {

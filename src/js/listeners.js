@@ -193,6 +193,15 @@ class Listeners {
     toggleClass(elements.container, player.config.classNames.isTouch, true);
   };
 
+  // Device disable touch
+  toggleSmall = (isSmall) => {
+    const { player } = this;
+    const { elements } = player;
+
+    // Remove touch class
+    toggleClass(elements.container, player.config.classNames.isSmall, isSmall);
+  };
+
   // Global window & document listeners
   global = (toggle = true) => {
     const { player } = this;
@@ -207,6 +216,21 @@ class Listeners {
 
     // Detect touch by events
     once.call(player, document.body, 'touchstart', this.firstTouch);
+
+    const maybeToggleSmall = () => {
+      const { container } = player.elements;
+      const { offsetWidth } = container;
+
+      if (offsetWidth <= 600) {
+        this.toggleSmall(true);
+      } else {
+        this.toggleSmall(false);
+      }
+    };
+
+    maybeToggleSmall();
+
+    window.addEventListener('resize', maybeToggleSmall);
   };
 
   // Container listeners
@@ -306,8 +330,23 @@ class Listeners {
         return;
       }
 
+      // const handleResize = () => {
+      //   const [videoWidth] = getAspectRatio.call(player);
+
+      //   console.log('cicaj', videoWidth);
+
+      //   if (videoWidth <= 600) {
+      //     this.toggleSmall(true);
+      //   } else {
+      //     this.toggleSmall(false);
+      //   }
+      // };
+
+      // handleResize();
+
+      // window.addEventListener('resize', () => handleResize);
+
       // Set Vimeo gutter
-      setGutter();
 
       // Watch for resizes
       const method = event.type === 'enterfullscreen' ? on : off;

@@ -4196,6 +4196,7 @@ const defaults = {
     hidden: 'plyr__sr-only',
     hideControls: 'plyr--hide-controls',
     isTouch: 'plyr--is-touch',
+    isSmall: 'plyr--is-small',
     uiSupported: 'plyr--full-ui',
     noTransition: 'plyr--no-transition',
     display: {
@@ -4903,6 +4904,18 @@ class Listeners {
       // Add touch class
       toggleClass(elements.container, player.config.classNames.isTouch, true);
     });
+    // Device disable touch
+    _defineProperty$1(this, "toggleSmall", isSmall => {
+      const {
+        player
+      } = this;
+      const {
+        elements
+      } = player;
+
+      // Remove touch class
+      toggleClass(elements.container, player.config.classNames.isSmall, isSmall);
+    });
     // Global window & document listeners
     _defineProperty$1(this, "global", (toggle = true) => {
       const {
@@ -4919,6 +4932,21 @@ class Listeners {
 
       // Detect touch by events
       once.call(player, document.body, 'touchstart', this.firstTouch);
+      const maybeToggleSmall = () => {
+        const {
+          container
+        } = player.elements;
+        const {
+          offsetWidth
+        } = container;
+        if (offsetWidth <= 600) {
+          this.toggleSmall(true);
+        } else {
+          this.toggleSmall(false);
+        }
+      };
+      maybeToggleSmall();
+      window.addEventListener('resize', maybeToggleSmall);
     });
     // Container listeners
     _defineProperty$1(this, "container", () => {
@@ -5020,8 +5048,23 @@ class Listeners {
           return;
         }
 
+        // const handleResize = () => {
+        //   const [videoWidth] = getAspectRatio.call(player);
+
+        //   console.log('cicaj', videoWidth);
+
+        //   if (videoWidth <= 600) {
+        //     this.toggleSmall(true);
+        //   } else {
+        //     this.toggleSmall(false);
+        //   }
+        // };
+
+        // handleResize();
+
+        // window.addEventListener('resize', () => handleResize);
+
         // Set Vimeo gutter
-        setGutter();
 
         // Watch for resizes
         const method = event.type === 'enterfullscreen' ? on : off;
@@ -7929,16 +7972,58 @@ class PreviewThumbnails {
       const {
         imageContainer
       } = this.elements.thumb;
+      const MAX_THUMB_HEIGHT = this.player.media.clientHeight / 5;
+      const MAX_THUMB_WIDTH = this.player.media.clientWidth / 5;
+      const applyMaxDimensions = (initialWidth, initialHeight) => {
+        let width = initialWidth;
+        let height = initialHeight;
+        if (height > MAX_THUMB_HEIGHT) {
+          height = MAX_THUMB_HEIGHT;
+          width = Math.floor(height * this.thumbAspectRatio);
+        }
+        if (width > MAX_THUMB_WIDTH) {
+          width = MAX_THUMB_WIDTH;
+          height = Math.floor(width / this.thumbAspectRatio);
+        }
+        return [width, height];
+      };
+      const updateContainerStyle = (width, height) => {
+        imageContainer.style.width = `${width}px`;
+        imageContainer.style.height = `${height}px`;
+      };
       if (!this.sizeSpecifiedInCSS) {
-        const thumbWidth = Math.floor(this.thumbContainerHeight * this.thumbAspectRatio);
-        imageContainer.style.height = `${this.thumbContainerHeight}px`;
-        imageContainer.style.width = `${thumbWidth}px`;
+        // Initial thumb dimensions
+        let thumbWidth = Math.floor(this.thumbContainerHeight * this.thumbAspectRatio);
+        let thumbHeight = this.thumbContainerHeight;
+
+        // Apply maximum dimensions if the calculated size exceeds them
+        [thumbWidth, thumbHeight] = applyMaxDimensions(thumbWidth, thumbHeight);
+
+        // Update thumbHeight for later use
+        this.thumbHeight = thumbHeight;
+
+        // Set the style
+        updateContainerStyle(thumbWidth, thumbHeight);
       } else if (imageContainer.clientHeight > 20 && imageContainer.clientWidth < 20) {
-        const thumbWidth = Math.floor(imageContainer.clientHeight * this.thumbAspectRatio);
-        imageContainer.style.width = `${thumbWidth}px`;
+        // Handle specific dimension constraints for width
+        let thumbWidth = Math.floor(imageContainer.clientHeight * this.thumbAspectRatio);
+        let thumbHeight = imageContainer.clientHeight;
+        if (thumbWidth > MAX_THUMB_WIDTH) {
+          thumbWidth = MAX_THUMB_WIDTH;
+          thumbHeight = Math.floor(thumbWidth / this.thumbAspectRatio);
+        }
+        this.thumbHeight = thumbHeight; // Update for later use
+        updateContainerStyle(thumbWidth, thumbHeight);
       } else if (imageContainer.clientHeight < 20 && imageContainer.clientWidth > 20) {
-        const thumbHeight = Math.floor(imageContainer.clientWidth / this.thumbAspectRatio);
-        imageContainer.style.height = `${thumbHeight}px`;
+        // Handle specific dimension constraints for height
+        let thumbHeight = Math.floor(imageContainer.clientWidth / this.thumbAspectRatio);
+        if (thumbHeight > MAX_THUMB_HEIGHT) {
+          thumbHeight = MAX_THUMB_HEIGHT;
+          const thumbWidth = Math.floor(thumbHeight * this.thumbAspectRatio);
+          updateContainerStyle(thumbWidth, thumbHeight);
+        }
+        this.thumbHeight = thumbHeight; // Update for later use
+        updateContainerStyle(imageContainer.clientWidth, thumbHeight);
       }
       this.setThumbContainerPos();
     });
@@ -7978,7 +8063,7 @@ class PreviewThumbnails {
       if (!this.usingSprites) return;
 
       // Find difference between height and preview container height
-      const multiplier = this.thumbContainerHeight / frame.h;
+      const multiplier = this.thumbHeight / frame.h;
 
       // eslint-disable-next-line no-param-reassign
       previewImage.style.height = `${previewImage.naturalHeight * multiplier}px`;
@@ -7995,6 +8080,7 @@ class PreviewThumbnails {
     this.lastMouseMoveTime = Date.now();
     this.mouseDown = false;
     this.loadedImages = [];
+    this.thumbHeight = 0;
     this.elements = {
       thumb: {},
       scrubbing: {}

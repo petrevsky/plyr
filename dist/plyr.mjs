@@ -4786,14 +4786,21 @@ const ui = {
 
     // Set property synchronously to respect the call order
     this.media.setAttribute('data-poster', poster);
+    loadImage(poster);
 
     // Show the poster
     this.elements.poster.removeAttribute('hidden');
+    Object.assign(this.elements.poster.style, {
+      backgroundImage: `url('${poster}')`,
+      // Reset backgroundSize as well (since it can be set to "cover" for padded thumbnails for youtube)
+      backgroundSize: ''
+    });
+    ui.togglePoster.call(this, true);
 
     // Wait until ui is ready
     return ready.call(this)
     // Load image
-    .then(() => loadImage(poster)).catch(error => {
+    .catch(error => {
       // Hide poster on error unless it's been set by another call
       if (poster === this.poster) {
         ui.togglePoster.call(this, false);
@@ -4805,14 +4812,6 @@ const ui = {
       if (poster !== this.poster) {
         throw new Error('setPoster cancelled by later call to setPoster');
       }
-    }).then(() => {
-      Object.assign(this.elements.poster.style, {
-        backgroundImage: `url('${poster}')`,
-        // Reset backgroundSize as well (since it can be set to "cover" for padded thumbnails for youtube)
-        backgroundSize: ''
-      });
-      ui.togglePoster.call(this, true);
-      return poster;
     });
   },
   // Check playing state
@@ -9365,7 +9364,7 @@ class Plyr {
       this.debug.warn('Poster can only be set for video');
       return;
     }
-    ui.setPoster.call(this, input, false).catch(() => {});
+    ui.setPoster.call(this, input).catch(() => {});
   }
 
   /**

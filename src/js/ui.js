@@ -176,15 +176,24 @@ const ui = {
     // Set property synchronously to respect the call order
     this.media.setAttribute('data-poster', poster);
 
+    loadImage(poster);
+
     // Show the poster
     this.elements.poster.removeAttribute('hidden');
+
+    Object.assign(this.elements.poster.style, {
+      backgroundImage: `url('${poster}')`,
+      // Reset backgroundSize as well (since it can be set to "cover" for padded thumbnails for youtube)
+      backgroundSize: '',
+    });
+
+    ui.togglePoster.call(this, true);
 
     // Wait until ui is ready
     return (
       ready
         .call(this)
         // Load image
-        .then(() => loadImage(poster))
         .catch((error) => {
           // Hide poster on error unless it's been set by another call
           if (poster === this.poster) {
@@ -198,17 +207,6 @@ const ui = {
           if (poster !== this.poster) {
             throw new Error('setPoster cancelled by later call to setPoster');
           }
-        })
-        .then(() => {
-          Object.assign(this.elements.poster.style, {
-            backgroundImage: `url('${poster}')`,
-            // Reset backgroundSize as well (since it can be set to "cover" for padded thumbnails for youtube)
-            backgroundSize: '',
-          });
-
-          ui.togglePoster.call(this, true);
-
-          return poster;
         })
     );
   },

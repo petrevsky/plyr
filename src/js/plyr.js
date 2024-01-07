@@ -998,7 +998,7 @@ class Plyr {
       return;
     }
 
-    ui.setPoster.call(this, input, false).catch(() => {});
+    ui.setPoster.call(this, input).catch(() => {});
   }
 
   /**
